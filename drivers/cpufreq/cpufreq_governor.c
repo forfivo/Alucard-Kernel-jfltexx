@@ -124,6 +124,7 @@ void dbs_check_cpu(struct dbs_data *dbs_data, int cpu)
 		if (unlikely(!wall_time || wall_time < idle_time))
 			continue;
 
+
 		/*
 		 * If the CPU had gone completely idle, and a task just woke up
 		 * on this CPU now, it would be unfair to calculate 'load' the
@@ -182,6 +183,7 @@ void dbs_check_cpu(struct dbs_data *dbs_data, int cpu)
 			max_load = load;
 	}
 
+	cpufreq_notify_utilization(policy, max_load);
 	dbs_data->cdata->gov_check_cpu(cpu, max_load);
 }
 EXPORT_SYMBOL_GPL(dbs_check_cpu);
