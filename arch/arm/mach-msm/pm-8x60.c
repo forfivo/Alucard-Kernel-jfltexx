@@ -103,7 +103,6 @@ enum {
 /******************************************************************************
  * Sleep Modes and Parameters
  *****************************************************************************/
-static int spc_attempts;
 enum {
 	MSM_PM_MODE_ATTR_SUSPEND,
 	MSM_PM_MODE_ATTR_IDLE,
@@ -229,7 +228,7 @@ static ssize_t msm_pm_mode_attr_store(struct kobject *kobj,
 	struct kobj_attribute *attr, const char *buf, size_t count)
 {
 	int ret = -EINVAL;
-	int i, j;
+	int i;
 
 	for (i = 0; i < MSM_PM_SLEEP_MODE_NR; i++) {
 		struct kernel_param kp;
@@ -251,19 +250,8 @@ static ssize_t msm_pm_mode_attr_store(struct kobject *kobj,
 			ret = param_set_byte(buf, &kp);
 		} else if (!strcmp(attr->attr.name,
 			msm_pm_mode_attr_labels[MSM_PM_MODE_ATTR_IDLE])) {
-			j = MSM_PM_SLEEP_MODE_POWER_COLLAPSE_STANDALONE;
-			if (!strcmp(kobj->name, msm_pm_sleep_mode_labels[j])) {
-				if (buf[0] == '1') {
-					spc_attempts++;
-					pr_err("%s: spc is blocked (%d) from [%s]\n",
-						__func__, spc_attempts,
-						current->comm);
-				}
-				ret = 0;
-			} else {
-				kp.arg = &mode->idle_enabled;
-				ret = param_set_byte(buf, &kp);
-			}
+			kp.arg = &mode->idle_enabled;
+			ret = param_set_byte(buf, &kp);
 		}
 		break;
 	}
