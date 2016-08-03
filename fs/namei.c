@@ -49,8 +49,8 @@
  * The new code replaces the old recursive symlink resolution with
  * an iterative one (in case of non-nested symlink chains).  It does
  * this with calls to <fs>_follow_link().
- * As a side effect, dir_namei(), _namei() and follow_link() are now 
- * replaced with a single function lookup_dentry() that can handle all 
+ * As a side effect, dir_namei(), _namei() and follow_link() are now
+ * replaced with a single function lookup_dentry() that can handle all
  * the special cases of the former code.
  *
  * With the new dcache, the pathname is stored at each inode, at least as
@@ -3476,6 +3476,8 @@ static long do_unlinkat(int dfd, const char __user *pathname)
 	struct dentry *dentry;
 	struct nameidata nd;
 	struct inode *inode = NULL;
+	char *path_buf = NULL;
+	char *propagate_path = NULL;
 	unsigned int lookup_flags = 0;
 retry:
 	name = user_path_parent(dfd, pathname, &nd, lookup_flags);
@@ -3501,6 +3503,10 @@ retry:
 		inode = dentry->d_inode;
 		if (!inode)
 			goto slashes;
+		if (inode->i_sb->s_op->unlink_callback) {
+			path_buf = kmalloc(PATH_MAX, GFP_KERNEL);
+			propagate_path = dentry_path_raw(dentry, path_buf, PATH_MAX);
+		}
 		ihold(inode);
 		error = security_path_unlink(&nd.path, dentry);
 		if (error)
@@ -3510,6 +3516,10 @@ exit2:
 		dput(dentry);
 	}
 	mutex_unlock(&nd.path.dentry->d_inode->i_mutex);
+	if (path_buf && !error) {
+		inode->i_sb->s_op->unlink_callback(inode->i_sb, propagate_path);
+		kfree(path_buf);
+	}
 	if (inode)
 		iput(inode);	/* truncate the inode here */
 	mnt_drop_write(nd.path.mnt);
