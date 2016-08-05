@@ -90,11 +90,11 @@ NAMBEROFCPUS=$(expr `grep processor /proc/cpuinfo | wc -l` + 1);
 echo $HOST_CHECK
 
 echo "Making kernel";
-time make ARCH=arm CROSS_COMPILE=android-toolchain/bin/arm-cortex_a15-linux-gnueabihf- CC='android-toolchain/bin/arm-cortex_a15-linux-gnueabihf-gcc --sysroot=android-toolchain/arm-cortex_a15-linux-gnueabihf/sysroot/' zImage -j ${NAMBEROFCPUS}
+time make ARCH=arm CROSS_COMPILE=android-toolchain/bin/arm-eabi- CC='android-toolchain/bin/arm-eabi-gcc --sysroot=android-toolchain/arm-Samsung-linux-gnueabihf/sysroot/' zImage -j ${NAMBEROFCPUS}
 stat "$KERNELDIR"/arch/arm/boot/zImage || exit 1;
 
 echo "Compiling Modules............"
-time make ARCH=arm CROSS_COMPILE=android-toolchain/bin/arm-cortex_a15-linux-gnueabihf- CC='android-toolchain/bin/arm-cortex_a15-linux-gnueabihf-gcc --sysroot=android-toolchain/arm-cortex_a15-linux-gnueabihf/sysroot/' modules -j ${NR_CPUS} || exit 1
+time make ARCH=arm CROSS_COMPILE=android-toolchain/bin/arm-eabi- CC='android-toolchain/bin/arm-eabi-gcc --sysroot=android-toolchain/arm-Samsung-linux-gnueabihf/sysroot/' modules -j ${NR_CPUS} || exit 1
 
 echo "Copy modules to Package"
 for i in `find $KERNELDIR -name '*.ko'`; do
@@ -108,8 +108,8 @@ if [ -e $KERNELDIR/arch/arm/boot/zImage ]; then
 	cp arch/arm/boot/zImage $PACKAGEDIR/zImage
 
 	# strip not needed debugs from modules.
-	android-toolchain/bin/arm-cortex_a15-linux-gnueabihf-strip --strip-unneeded $PACKAGEDIR/system/lib/modules/* 2>/dev/null
-	android-toolchain/bin/arm-cortex_a15-linux-gnueabihf-strip --strip-debug $PACKAGEDIR/system/lib/modules/* 2>/dev/null
+	android-toolchain/bin/arm-eabi-strip --strip-unneeded $PACKAGEDIR/system/lib/modules/* 2>/dev/null
+	android-toolchain/bin/arm-eabi-strip --strip-debug $PACKAGEDIR/system/lib/modules/* 2>/dev/null
 
 	echo "Make boot.img"
 	./mkbootfs $INITRAMFS_TMP | gzip > $PACKAGEDIR/ramdisk.gz
