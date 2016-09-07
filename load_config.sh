@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cp arch/arm/configs/alucard_defconfig .config;
+cp arch/arm/configs/b--b_defconfig .config;
 echo "done ...";
 
