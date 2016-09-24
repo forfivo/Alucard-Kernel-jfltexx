@@ -411,7 +411,7 @@ void ddl_fw_release(struct ddl_buf_addr *dram_base)
 	} else {
 	if (res_trk_check_for_sec_session())
 		res_trk_close_secure_session();
-		res_trk_release_fw_addr();
+	res_trk_release_fw_addr();
 	}
 }
 
