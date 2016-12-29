@@ -32,6 +32,9 @@ modules.builtin
 *.lzo
 *.patch
 *.gcno
+#Produced files
+/READY-JB/Kernel-*
+/READY-JB/boot.img
 
 #
 # Top-level generic files
