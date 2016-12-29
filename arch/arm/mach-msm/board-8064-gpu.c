@@ -118,6 +118,38 @@ static struct msm_bus_vectors grp3d_nominal_low_vectors[] = {
 	},
 };
 
+
+#ifdef CONFIG_GPU_OVERCLOCK
+static struct msm_bus_vectors grp3d_nominal_high_vectors[] = {
+	{
+		.src = MSM_BUS_MASTER_GRAPHICS_3D,
+		.dst = MSM_BUS_SLAVE_EBI_CH0,
+		.ab = 0,
+		.ib = KGSL_CONVERT_TO_MBPS(3200),
+	},
+	{
+		.src = MSM_BUS_MASTER_GRAPHICS_3D_PORT1,
+		.dst = MSM_BUS_SLAVE_EBI_CH0,
+		.ab = 0,
+		.ib = KGSL_CONVERT_TO_MBPS(3200),
+	},
+};
+
+static struct msm_bus_vectors grp3d_max_vectors[] = {
+	{
+		.src = MSM_BUS_MASTER_GRAPHICS_3D,
+		.dst = MSM_BUS_SLAVE_EBI_CH0,
+		.ab = 0,
+		.ib = KGSL_CONVERT_TO_MBPS(4660),
+	},
+	{
+		.src = MSM_BUS_MASTER_GRAPHICS_3D_PORT1,
+		.dst = MSM_BUS_SLAVE_EBI_CH0,
+		.ab = 0,
+		.ib = KGSL_CONVERT_TO_MBPS(4660),
+	},
+};
+#else
 static struct msm_bus_vectors grp3d_nominal_high_vectors[] = {
 	{
 		.src = MSM_BUS_MASTER_GRAPHICS_3D,
@@ -147,6 +179,7 @@ static struct msm_bus_vectors grp3d_max_vectors[] = {
 		.ib = KGSL_CONVERT_TO_MBPS(4264),
 	},
 };
+#endif
 
 static struct msm_bus_paths grp3d_bus_scale_usecases[] = {
 	{
@@ -226,8 +259,34 @@ static struct kgsl_device_iommu_data kgsl_3d0_iommu_data[] = {
 
 static struct kgsl_device_platform_data kgsl_3d0_pdata = {
 	.pwrlevel = {
+#ifdef CONFIG_GPU_OVERCLOCK
 		{
-			.gpu_freq = 400000000,
+			.gpu_freq = 520000000,
+			.bus_freq = 4,
+			.io_fraction = 0,
+		},
+		{
+			.gpu_freq = 450000000,
+			.bus_freq = 3,
+			.io_fraction = 0,
+		},
+		{
+			.gpu_freq = 320000000,
+			.bus_freq = 2,
+			.io_fraction = 33,
+		},
+		{
+			.gpu_freq = 118000000,
+			.bus_freq = 1,
+			.io_fraction = 100,
+		},
+		{
+			.gpu_freq = 27000000,
+			.bus_freq = 0,
+		},
+#else
+		{
+			.gpu_freq = 450000000,
 			.bus_freq = 4,
 			.io_fraction = 0,
 		},
@@ -236,6 +295,7 @@ static struct kgsl_device_platform_data kgsl_3d0_pdata = {
 			.bus_freq = 3,
 			.io_fraction = 33,
 		},
+
 		{
 			.gpu_freq = 200000000,
 			.bus_freq = 2,
@@ -250,6 +310,7 @@ static struct kgsl_device_platform_data kgsl_3d0_pdata = {
 			.gpu_freq = 27000000,
 			.bus_freq = 0,
 		},
+#endif
 	},
 	.init_level = 1,
 	.num_levels = 5,
@@ -281,8 +342,10 @@ void __init apq8064_init_gpu(void)
 {
 	unsigned int version = socinfo_get_version();
 
+#ifndef CONFIG_GPU_OVERCLOCK
 	if (cpu_is_apq8064ab())
 		kgsl_3d0_pdata.pwrlevel[0].gpu_freq = 450000000;
+#endif
 	if (SOCINFO_VERSION_MAJOR(version) == 2) {
 		kgsl_3d0_pdata.chipid = ADRENO_CHIPID(3, 2, 0, 2);
 	} else {
