@@ -45,9 +45,6 @@ delete_recursive("/system/lib/modules/scsi_wait_scan.ko");
 delete_recursive("/system/lib/modules/spidev.ko");
 delete_recursive("/system/lib/modules/usb_wwan.ko");
 
-ui_print("Deleting old STweaks");
-delete_recursive("/system/priv-app/STweaks");
-
 ui_print("Deleting old binaries");
 ui_print("");
 delete_recursive("/system/xbin/sqlite3");
