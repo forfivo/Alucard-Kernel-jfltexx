@@ -19,7 +19,6 @@ ui_print("-----------------------------------------");
 ui_print("Mounting system");
 ui_print("");
 run_program("/sbin/busybox", "mount", "/system");
-run_program("/sbin/busybox", "mount", "/data");
 
 show_progress(0.100000, 60);
 
@@ -55,7 +54,6 @@ delete_recursive("/system/xbin/wget");
 ui_print("Copying modules and apps");
 ui_print("");
 package_extract_dir("system", "/system");
-package_extract_dir("data", "/data");
 set_perm_recursive(0, 0, 0755, 0644, "/system/lib/modules");
 set_perm(0, 0, 0755, "/system/xbin/sqlite3");
 set_perm(0, 0, 0755, "/system/xbin/zip");
@@ -85,6 +83,5 @@ ui_print("");
 run_program("/tmp/flash_kernel.sh");
 
 unmount("/system");
-unmount("/data");
 show_progress(0.100000, 0);
 ui_print("Kernel successfully installed");
