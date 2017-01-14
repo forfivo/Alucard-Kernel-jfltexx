@@ -62,13 +62,13 @@ static unsigned int min_input_interval = 150;
 module_param(min_input_interval, uint, 0644);
 
 static struct min_cpu_limit {
-	uint32_t user_min_freq_lock[4];
+	uint32_t input_boost_freq[4];
 	uint32_t user_boost_freq_lock[4];
 } limit = {
-	.user_min_freq_lock[0] = 0,
-	.user_min_freq_lock[1] = 0,
-	.user_min_freq_lock[2] = 0,
-	.user_min_freq_lock[3] = 0,
+	.input_boost_freq[0] = 0,
+	.input_boost_freq[1] = 0,
+	.input_boost_freq[2] = 0,
+	.input_boost_freq[3] = 0,
 	.user_boost_freq_lock[0] = 0,
 	.user_boost_freq_lock[1] = 0,
 	.user_boost_freq_lock[2] = 0,
@@ -82,7 +82,7 @@ static void do_input_boost_rem(struct work_struct *work)
 	for_each_possible_cpu(cpu) {
 		if (limit.user_boost_freq_lock[cpu] > 0) {
 			dprintk("Removing input boost for CPU%u\n", cpu);
-			set_cpu_min_lock(cpu, limit.user_min_freq_lock[cpu]);
+			set_cpu_min_lock(cpu, 0);
 			limit.user_boost_freq_lock[cpu] = 0;
 		}
 	}
@@ -102,7 +102,6 @@ static void do_input_boost(struct work_struct *work)
 
 	for (cpu = 0; cpu < nr_cpus; cpu++) {
 		/* Save user current min & boost lock */
-		limit.user_min_freq_lock[cpu] = get_cpu_min_lock(cpu);
 		limit.user_boost_freq_lock[cpu] = input_boost_freq;
 
 		dprintk("Input boost for CPU%u\n", cpu);
