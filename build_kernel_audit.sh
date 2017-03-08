@@ -113,7 +113,7 @@ if [ -e $KERNELDIR/arch/arm/boot/zImage ]; then
 
 	echo "Make boot.img"
 	./mkbootfs $INITRAMFS_TMP | gzip > $PACKAGEDIR/ramdisk.gz
-	cmd_line="console=ttyHSL0,115200,n8 androidboot.hardware=qcom user_debug=31 ehci-hcd.park=3 enforcing=0 selinux=1 audit=1"
+	cmd_line="console=ttyHSL0,115200,n8 androidboot.hardware=qcom user_debug=31 ehci-hcd.park=3 maxcpus=2 androidboot.selinux=permissive"
 	./mkbootimg --cmdline "$cmd_line" --kernel $PACKAGEDIR/zImage --ramdisk $PACKAGEDIR/ramdisk.gz --base 0x80200000 --pagesize 2048 --ramdisk_offset 0x02000000 --output $PACKAGEDIR/boot.img
 	cd $PACKAGEDIR
 
@@ -130,7 +130,7 @@ if [ -e $KERNELDIR/arch/arm/boot/zImage ]; then
 	 rm $i;
 	done;
 
-	FILENAME=Kernel-B--B-${GETVER}-`date +"[%H-%M]-[%d-%m]-AOSPV4-EUR-MM6.0-SGIV-PWR-CORE"`.zip
+	FILENAME=Kernel-B--B-${GETVER}-`date +"[%H-%M]-[%d-%m]-AOSPV4-EUR-N7.0-SGIV-PWR-CORE"`.zip
 	zip -r $FILENAME .;
 
 	time_end=$(date +%s.%N)

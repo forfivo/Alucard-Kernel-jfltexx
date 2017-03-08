@@ -130,7 +130,7 @@ if [ -e $KERNELDIR/arch/arm/boot/zImage ]; then
 	 rm $i;
 	done;
 
-	FILENAME=Kernel-B--B-${GETVER}-`date +"[%H-%M]-[%d-%m]-AOSPV4-EUR-MM6.0-SGIV-PWR-CORE"`.zip
+	FILENAME=Kernel-B--B-${GETVER}-`date +"[%H-%M]-[%d-%m]-AOSPV4-EUR-N7.0-SGIV-PWR-CORE"`.zip
 	zip -r $FILENAME .;
 
 	time_end=$(date +%s.%N)
